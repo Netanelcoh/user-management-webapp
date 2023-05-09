@@ -4,16 +4,18 @@ import EditUser from "./EditUser";
 interface User {
   name: string;
   email: string;
+  userId: number;
 }
 
 interface Props {
   user: User;
+  handleEditUser: (newUser: User) => void;
 }
 
-function UserAction({ user }: Props) {
+function UserAction({ user, handleEditUser }: Props) {
   return (
     <Stack spacing={2} direction="row" align="center">
-      <EditUser user={user}></EditUser>
+      <EditUser user={user} handleEditUser={handleEditUser}></EditUser>
     </Stack>
   );
 }

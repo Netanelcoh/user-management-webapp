@@ -22,17 +22,19 @@ interface Props {
 interface User {
   name: string;
   email: string;
+  userId: number;
 }
 
 function EditModal({ isOpen, user, onClose, onSaveChanges }: Props) {
   //const [user, setUser] = useState<User>({ name: "", email: "" });
-  let nameRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     onSaveChanges({
       name: nameRef.current?.value || "",
       email: emailRef.current?.value || "",
+      userId: user.userId,
     });
   };
 

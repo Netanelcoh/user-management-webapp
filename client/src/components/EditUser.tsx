@@ -5,13 +5,15 @@ import { useState } from "react";
 interface User {
   name: string;
   email: string;
+  userId: number;
 }
 
 interface Props {
   user: User;
+  handleEditUser: (newUser: User) => void;
 }
 
-function EditUser({ user }: Props) {
+function EditUser({ user, handleEditUser }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
@@ -19,7 +21,8 @@ function EditUser({ user }: Props) {
   };
 
   const handleSave = (user: User) => {
-    //console.log(user);
+    console.log(user);
+    handleEditUser(user);
     setIsOpen(false);
   };
 

@@ -7,7 +7,7 @@ import {
   TableContainer,
   Button,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import UserRow from "./UserRow";
 import AddModal from "../utils/Modal/addModal";
@@ -15,16 +15,18 @@ import AddModal from "../utils/Modal/addModal";
 interface User {
   name: string;
   email: string;
+  userId: number;
 }
 
 function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [addButtonIsClicked, setAddButtonIsClicked] = useState(false);
 
-  const rows: JSX.Element[] = [];
+  const usersRef = useRef(users);
+  usersRef.current = users;
 
   useEffect(() => {
-    const users: User[] = [];
+    const usersWithId: User[] = [];
     const controller = new AbortController();
     let isMounted = true;
 
@@ -35,11 +37,15 @@ function UserTable() {
         })
         .then((res) => {
           res.data.forEach((user: User) =>
-            users.push({ name: user.name, email: user.email })
+            usersWithId.push({
+              name: user.name,
+              email: user.email,
+              userId: createNumericId(),
+            })
           );
         })
         .then(() => {
-          if (isMounted) setUsers(users);
+          if (isMounted) setUsers(usersWithId);
         });
     }
     fetchData();
@@ -50,16 +56,21 @@ function UserTable() {
     };
   }, []);
 
-  users.forEach((user, index) => {
-    rows.push(<UserRow key={index} user={user}></UserRow>);
-  });
-
   const onClickAddButton = () => {
     setAddButtonIsClicked(true);
   };
 
   const onCloseAddButton = () => {
     setAddButtonIsClicked(false);
+  };
+
+  const handleEditUser = (newUser: User) => {
+    let usersArr = usersRef.current;
+    let userIndex = usersArr.findIndex(
+      (user) => user.userId === newUser.userId
+    );
+    userIndex !== undefined ? (usersArr[userIndex] = newUser) : null;
+    setUsers([...usersArr]);
   };
 
   return (
@@ -80,7 +91,15 @@ function UserTable() {
                 </Th>
               </Tr>
             </Thead>
-            <Tbody>{rows}</Tbody>
+            <Tbody>
+              {users.map((user, index) => (
+                <UserRow
+                  key={index}
+                  user={user}
+                  handleEditUser={handleEditUser}
+                ></UserRow>
+              ))}
+            </Tbody>
           </Table>
         </TableContainer>
       )}
@@ -89,3 +108,24 @@ function UserTable() {
 }
 
 export default UserTable;
+
+function createNumericId() {
+  // Get the current timestamp in milliseconds
+  const timestamp = Date.now();
+
+  // Generate a random number between 0 and 9999
+  const randNum = Math.floor(Math.random() * 10000);
+
+  // Combine the timestamp and random number to create a unique ID
+  const uniqueId = parseInt(`${timestamp}${randNum}`);
+
+  return uniqueId;
+}
+
+// const dummyUsers = [
+//   { email: "Sincere@april.biz", name: "Leanne Graham" },
+//   { email: "Shanna@melissa.tv", name: "Ervin Howell" },
+//   { email: "Nathan@yesenia.net", name: "Clementine Bau" },
+//   { email: "Julianne.OConner@kory.org", name: "Patricik" },
+//   { email: "Lucio_Hettinger@annie.ca", name: "Chelsey" },
+// ];
