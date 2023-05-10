@@ -38,7 +38,7 @@ function DeleteAlertDialog(props: Props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Customer
+              Delete User
             </AlertDialogHeader>
 
             <AlertDialogBody>

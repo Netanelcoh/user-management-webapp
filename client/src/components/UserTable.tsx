@@ -1,16 +1,8 @@
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  TableContainer,
-  Button,
-} from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, TableContainer } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import UserRow from "./UserRow";
-import AddModal from "../utils/Modal/addModal";
+import AddUser from "./AddUser";
 
 interface User {
   name: string;
@@ -18,9 +10,14 @@ interface User {
   userId: number;
 }
 
+interface newUser {
+  name: string;
+  email: string;
+  userId?: number;
+}
+
 function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
-  const [addButtonIsClicked, setAddButtonIsClicked] = useState(false);
 
   const usersRef = useRef(users);
   usersRef.current = users;
@@ -56,12 +53,14 @@ function UserTable() {
     };
   }, []);
 
-  const onClickAddButton = () => {
-    setAddButtonIsClicked(true);
-  };
-
-  const onCloseAddButton = () => {
-    setAddButtonIsClicked(false);
+  const onAddNewUser = (newUser: newUser) => {
+    let newUserWithId = {
+      ...newUser,
+      userId: createNumericId(),
+    };
+    console.log(newUserWithId);
+    usersRef.current.push(newUserWithId);
+    setUsers([...usersRef.current]);
   };
 
   const handleEditUser = (newUser: User) => {
@@ -69,7 +68,7 @@ function UserTable() {
     let userIndex = usersArr.findIndex(
       (user) => user.userId === newUser.userId
     );
-    userIndex !== undefined ? (usersArr[userIndex] = newUser) : null;
+    userIndex !== -1 ? (usersArr[userIndex] = newUser) : null;
     setUsers([...usersArr]);
   };
 
@@ -83,35 +82,29 @@ function UserTable() {
 
   return (
     <div>
-      {addButtonIsClicked ? (
-        <AddModal onCloseAddButton={onCloseAddButton} />
-      ) : (
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Email</Th>
-                <Th>
-                  <Button onClick={onClickAddButton} colorScheme="blue">
-                    Add
-                  </Button>
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {users.map((user, index) => (
-                <UserRow
-                  key={index}
-                  user={user}
-                  handleEditUser={handleEditUser}
-                  handleDeleteUser={handleDeleteUser}
-                ></UserRow>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      )}
+      <TableContainer>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Email</Th>
+              <Th>
+                <AddUser onAddNewUser={onAddNewUser} />
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {users.map((user, index) => (
+              <UserRow
+                key={index}
+                user={user}
+                handleEditUser={handleEditUser}
+                handleDeleteUser={handleDeleteUser}
+              ></UserRow>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }

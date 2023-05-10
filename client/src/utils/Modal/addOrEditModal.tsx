@@ -12,11 +12,10 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 
-interface Props {
-  user: User;
-  isOpen: boolean;
-  onSaveChanges: (user: User) => void;
-  onClose: () => void;
+interface newUser {
+  name: string;
+  email: string;
+  userId?: number;
 }
 
 interface User {
@@ -25,37 +24,45 @@ interface User {
   userId: number;
 }
 
-function EditModal({ isOpen, user, onClose, onSaveChanges }: Props) {
-  //const [user, setUser] = useState<User>({ name: "", email: "" });
+interface Props {
+  title: string;
+  isOpen: boolean;
+  onClose: () => void;
+  handleSave: (user: User & newUser) => void;
+  user?: User;
+}
+
+function AddOrEditModal(props: Props) {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
-    onSaveChanges({
+    let user = {
       name: nameRef.current?.value || "",
       email: emailRef.current?.value || "",
-      userId: user.userId,
-    });
+      userId: props.user?.userId || 0,
+    };
+    props.handleSave(user);
   };
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>{props.title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text mb="8px">Name: </Text>
             <Input
-              defaultValue={user.name}
+              defaultValue={props.user?.name}
               ref={nameRef}
               type="text"
               size="sm"
             />
             <Text mb="8px">Email: </Text>
             <Input
-              defaultValue={user.email}
+              defaultValue={props.user?.email}
               ref={emailRef}
               type="text"
               size="sm"
@@ -63,7 +70,7 @@ function EditModal({ isOpen, user, onClose, onSaveChanges }: Props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={props.onClose}>
               Close
             </Button>
             <Button onClick={handleSave} variant="ghost">
@@ -76,4 +83,4 @@ function EditModal({ isOpen, user, onClose, onSaveChanges }: Props) {
   );
 }
 
-export default EditModal;
+export default AddOrEditModal;

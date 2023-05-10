@@ -5,36 +5,35 @@ import AddOrEditModal from "../utils/Modal/addOrEditModal";
 interface User {
   name: string;
   email: string;
-  userId: number;
+  userId?: number;
 }
 
 interface Props {
-  user: User;
-  handleEditUser: (user: User) => void;
+  onAddNewUser: (newUser: User) => void;
 }
 
-function EditUser(props: Props) {
+function AddUser(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
     setIsOpen(false);
   };
 
-  const handleSave = (user: User) => {
-    console.log(user);
-    props.handleEditUser(user);
+  const onAddNewUser = (newUser: User) => {
     setIsOpen(false);
+    props.onAddNewUser(newUser);
   };
 
   return (
     <div>
-      <Button onClick={() => setIsOpen(true)}>edit</Button>
+      <Button onClick={() => setIsOpen(true)} colorScheme="blue">
+        Add
+      </Button>
       {isOpen && (
         <AddOrEditModal
-          title={"Edit User"}
+          title={"New User"}
           isOpen={true}
-          user={props.user}
-          handleSave={handleSave}
+          handleSave={onAddNewUser}
           onClose={onClose}
         ></AddOrEditModal>
       )}
@@ -42,4 +41,4 @@ function EditUser(props: Props) {
   );
 }
 
-export default EditUser;
+export default AddUser;

@@ -10,7 +10,7 @@ interface User {
 
 interface Props {
   user: User;
-  handleEditUser: (newUser: User) => void;
+  handleEditUser: (user: User) => void;
   handleDeleteUser: (user: User) => void;
 }
 
