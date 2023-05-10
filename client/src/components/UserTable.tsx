@@ -73,6 +73,14 @@ function UserTable() {
     setUsers([...usersArr]);
   };
 
+  const handleDeleteUser = (currentUser: User) => {
+    let usersArr = usersRef.current;
+    let newUserList = usersArr.filter(
+      (user) => user.userId !== currentUser.userId
+    );
+    setUsers([...newUserList]);
+  };
+
   return (
     <div>
       {addButtonIsClicked ? (
@@ -97,6 +105,7 @@ function UserTable() {
                   key={index}
                   user={user}
                   handleEditUser={handleEditUser}
+                  handleDeleteUser={handleDeleteUser}
                 ></UserRow>
               ))}
             </Tbody>

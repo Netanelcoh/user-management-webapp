@@ -10,16 +10,21 @@ interface User {
 interface Props {
   user: User;
   handleEditUser: (newUser: User) => void;
+  handleDeleteUser: (user: User) => void;
 }
 
-function UserRow({ user, handleEditUser }: Props) {
+function UserRow(props: Props) {
   //const test = () => console.log(test);
   return (
     <Tr>
-      <Td>{user.name}</Td>
-      <Td>{user.email}</Td>
+      <Td>{props.user.name}</Td>
+      <Td>{props.user.email}</Td>
       <Td>
-        <UserAction user={user} handleEditUser={handleEditUser}></UserAction>
+        <UserAction
+          user={props.user}
+          handleEditUser={props.handleEditUser}
+          handleDeleteUser={props.handleDeleteUser}
+        ></UserAction>
       </Td>
     </Tr>
   );

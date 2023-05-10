@@ -1,5 +1,6 @@
 import { Stack } from "@chakra-ui/react";
 import EditUser from "./EditUser";
+import DeleteUser from "./DeleteUser";
 
 interface User {
   name: string;
@@ -10,12 +11,20 @@ interface User {
 interface Props {
   user: User;
   handleEditUser: (newUser: User) => void;
+  handleDeleteUser: (user: User) => void;
 }
 
-function UserAction({ user, handleEditUser }: Props) {
+function UserAction(props: Props) {
   return (
     <Stack spacing={2} direction="row" align="center">
-      <EditUser user={user} handleEditUser={handleEditUser}></EditUser>
+      <EditUser
+        user={props.user}
+        handleEditUser={props.handleEditUser}
+      ></EditUser>
+      <DeleteUser
+        user={props.user}
+        handleDeleteUser={props.handleDeleteUser}
+      ></DeleteUser>
     </Stack>
   );
 }
