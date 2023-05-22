@@ -24,11 +24,9 @@ async function findUser(req, res) {
     }
     res.status(200).send(users);
   } catch (error) {
-    if (error instanceof SyntaxError) res.status(400).send("Invalid Json");
-    if (error instanceof mongoose.Error) {
-      res.status(400).send("Error in db");
-      console.log(error);
-    }
+    let msg = createCustomeErrorMsg(error);
+    console.log(error);
+    res.status(400).send(msg);
   }
 }
 
@@ -45,20 +43,7 @@ async function addUser(req, res) {
     console.log("new user is created " + query);
     res.status(200).send("new user is created");
   } catch (error) {
-    let msg = "";
-    switch (true) {
-      case error instanceof SyntaxError:
-        msg = "Invalid Json";
-        break;
-      case error instanceof mongoose.Error.ValidationError:
-        msg = "user validation failed \n" + error.errors.name;
-        break;
-      case error instanceof mongoose.Error:
-        msg = "Error in db";
-        break;
-      default:
-        msg = "Error";
-    }
+    let msg = createCustomeErrorMsg(error);
     console.log(error);
     res.status(400).send(msg);
   }
@@ -86,20 +71,7 @@ async function editUser(req, res) {
     res.status(200).send("Successfully");
     //A.findOneAndUpdate(conditions, update: {new object}, options)  // returns Query
   } catch (error) {
-    let msg = "";
-    switch (true) {
-      case error instanceof SyntaxError:
-        msg = "Invalid Json";
-        break;
-      case error instanceof mongoose.Error.ValidationError:
-        msg = "user validation failed \n" + error.errors.name;
-        break;
-      case error instanceof mongoose.Error:
-        msg = "Error in db";
-        break;
-      default:
-        msg = "Error";
-    }
+    let msg = createCustomeErrorMsg(error);
     console.log(error);
     res.status(400).send(msg);
   }
@@ -120,26 +92,20 @@ async function deleteUser(req, res) {
     res.status(200).send("Successfully");
     //A.findOneAndUpdate(conditions, update: {new object}, options)  // returns Query
   } catch (error) {
-    let msg = "";
-    switch (true) {
-      case error instanceof SyntaxError:
-        msg = "Invalid Json";
-        break;
-      case error instanceof mongoose.Error.ValidationError:
-        msg = "user validation failed \n" + error.errors.name;
-        break;
-      case error instanceof mongoose.Error.CastError:
-        msg = error.reason;
-        break;
-      case error instanceof mongoose.Error:
-        msg = "Error in db";
-        break;
-      default:
-        msg = "Error";
-    }
+    let msg = createCustomeErrorMsg(error);
     console.log(error);
     res.status(400).send(msg);
   }
+}
+
+function createCustomeErrorMsg(error) {
+  if (error instanceof SyntaxError) return "Invalid Json";
+  if (error instanceof mongoose.Error.ValidationError)
+    return "user validation failed \n" + error.errors.name;
+  if (error instanceof mongoose.Error.CastError) return error.reason;
+  if (error instanceof mongoose.Error) return "Error in db";
+
+  return "Error";
 }
 
 module.exports.findUser = findUser;
