@@ -11,24 +11,13 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-
-interface newUser {
-  name: string;
-  email: string;
-  userId?: number;
-}
-
-interface User {
-  name: string;
-  email: string;
-  userId: number;
-}
+import { User } from "../../interfaces/User";
 
 interface Props {
   title: string;
   isOpen: boolean;
   onClose: () => void;
-  handleSave: (user: User & newUser) => void;
+  handleSave: (user: User) => void;
   user?: User;
 }
 
@@ -40,7 +29,7 @@ function AddOrEditModal(props: Props) {
     let user = {
       name: nameRef.current?.value || "",
       email: emailRef.current?.value || "",
-      userId: props.user?.userId || 0,
+      _id: props.user?._id,
     };
     props.handleSave(user);
   };

@@ -8,12 +8,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-
-interface User {
-  name: string;
-  email: string;
-  userId: number;
-}
+import { User } from "../../interfaces/User";
 
 interface Props {
   user: User;

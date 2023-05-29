@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./models/user");
+const { userModel } = require("./models/user");
 
 const data = [
   {
@@ -19,8 +19,8 @@ const data = [
 async function addUsers() {
   await mongoose.connect("mongodb://localhost:27017/user");
 
-  await User.deleteMany({});
-  await User.insertMany(data);
+  await userModel.deleteMany({});
+  await userModel.insertMany(data);
 
   mongoose.disconnect();
   console.log("Done!!!!");

@@ -1,18 +1,13 @@
 import { Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import axios from "axios";
 import AddOrEditModal from "../utils/Modal/addOrEditModal";
+import { User } from "../interfaces/User";
+import { fetchData } from "../apiCalls/fetchData";
+import UserContext from "./contexts/userContext";
 
-interface User {
-  name: string;
-  email: string;
-  userId?: number;
-}
-
-interface Props {
-  onAddNewUser: (newUser: User) => void;
-}
-
-function AddUser(props: Props) {
+function AddUser() {
+  const { users, setUsers } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
@@ -20,8 +15,19 @@ function AddUser(props: Props) {
   };
 
   const onAddNewUser = (newUser: User) => {
-    setIsOpen(false);
-    props.onAddNewUser(newUser);
+    const path = "http://localhost:3000/api/users/add";
+
+    axios
+      .post(path, {
+        ...newUser,
+      })
+      .then(() => {
+        fetchData().then((res) => {
+          setUsers(res);
+          setIsOpen(false);
+        });
+      })
+      .catch((error) => console.log(error));
   };
 
   return (

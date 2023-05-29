@@ -1,19 +1,17 @@
 import { Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddOrEditModal from "../utils/Modal/addOrEditModal";
-
-interface User {
-  name: string;
-  email: string;
-  userId: number;
-}
+import { User } from "../interfaces/User";
+import axios from "axios";
+import { fetchData } from "../apiCalls/fetchData";
+import UserContext from "./contexts/userContext";
 
 interface Props {
   user: User;
-  handleEditUser: (user: User) => void;
 }
 
 function EditUser(props: Props) {
+  const { users, setUsers } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
@@ -21,9 +19,19 @@ function EditUser(props: Props) {
   };
 
   const handleSave = (user: User) => {
-    console.log(user);
-    props.handleEditUser(user);
-    setIsOpen(false);
+    const path = "http://localhost:3000/api/users/edit";
+
+    axios
+      .post(path, { ...user })
+      .then()
+      .then(() => {
+        fetchData().then((res) => {
+          console.log(res);
+          setUsers(res);
+          setIsOpen(false);
+        });
+      })
+      .catch((error) => console.log(error));
   };
 
   return (

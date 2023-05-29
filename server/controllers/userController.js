@@ -60,11 +60,15 @@ async function editUser(req, res) {
       return;
     }
 
-    const newUser = { ...query };
-    delete newUser.id;
-    validateUser(newUser);
-    const user = await userModel.findOneAndUpdate({ _id: query.id }, newUser);
-    if (user) {
+    const updatedUser = { name: query.name, email: query.email };
+    validateUser(updatedUser);
+    const user = await userModel.findOneAndUpdate(
+      { _id: query._id },
+      {
+        ...updatedUser,
+      }
+    );
+    if (user === null) {
       res.status(404).send("User with the given id is not found");
       return;
     }
@@ -105,7 +109,7 @@ function createCustomeErrorMsg(error) {
   if (error instanceof mongoose.Error.CastError) return error.reason;
   if (error instanceof mongoose.Error) return "Error in db";
 
-  return "Error";
+  return error;
 }
 
 module.exports.findUser = findUser;

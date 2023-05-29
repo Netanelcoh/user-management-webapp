@@ -1,19 +1,18 @@
 import { Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import axios from "axios";
 import DeleteAlertDialog from "../utils/Modal/deleteModal";
-
-interface User {
-  name: string;
-  email: string;
-  userId: number;
-}
+import { User } from "../interfaces/User";
+import UserContext from "./contexts/userContext";
+import { fetchData } from "../apiCalls/fetchData";
 
 interface Props {
   user: User;
-  handleDeleteUser: (user: User) => void;
+  //handleDeleteUser: (user: User) => void;
 }
 
 function DeleteUser(props: Props) {
+  const { users, setUsers } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
@@ -21,9 +20,16 @@ function DeleteUser(props: Props) {
   };
 
   const handleDelete = (user: User) => {
-    console.log(user);
-    props.handleDeleteUser(user);
-    setIsOpen(false);
+    const path = "http://localhost:3000/api/users/delete";
+    axios
+      .delete(path + `/${user._id}`)
+      .then(() => {
+        fetchData().then((res) => {
+          setUsers(res);
+          setIsOpen(false);
+        });
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
