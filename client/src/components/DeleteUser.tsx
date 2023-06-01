@@ -8,7 +8,6 @@ import { fetchData } from "../apiCalls/fetchData";
 
 interface Props {
   user: User;
-  //handleDeleteUser: (user: User) => void;
 }
 
 function DeleteUser(props: Props) {

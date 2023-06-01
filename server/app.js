@@ -1,17 +1,13 @@
 const express = require("express");
-const dbConnection = require("./onStartup/dbConnection");
 const app = express();
 
-dbConnection()
-  .then(() => {
-    const port = process.env.PORT || 3000;
-    require("./onStartup/routes")(app);
+require("./onStartup/dbConnection")();
+require("./onStartup/routes")(app);
 
-    app.listen(port, () => {
-      console.log(`app listening on port ${port}`);
-    });
-  })
-  .catch((error) => {
-    //load default view when error
-    console.log(error);
-  });
+const port = process.env.PORT || 3000;
+
+const server = app.listen(port, () => {
+  console.log(`app listening on port ${port}`);
+});
+
+module.exports = server;

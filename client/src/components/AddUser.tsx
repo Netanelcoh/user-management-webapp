@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import axios from "axios";
-import AddOrEditModal from "../utils/Modal/addOrEditModal";
+import UserDetailsModal from "../utils/Modal/userDetailsModal";
 import { User } from "../interfaces/User";
 import { fetchData } from "../apiCalls/fetchData";
 import UserContext from "./contexts/userContext";
@@ -36,12 +36,12 @@ function AddUser() {
         Add
       </Button>
       {isOpen && (
-        <AddOrEditModal
+        <UserDetailsModal
           title={"New User"}
           isOpen={true}
           handleSave={onAddNewUser}
           onClose={onClose}
-        ></AddOrEditModal>
+        ></UserDetailsModal>
       )}
     </div>
   );

@@ -15,7 +15,7 @@ async function findUser(req, res) {
 
     const users = await userModel.find(query);
     if (users.length === 0) {
-      res.status(400).send(`
+      res.status(404).send(`
         Unable to find user. it might be because the following reasons:
         1) user with ${query} is not exist in db.
         2) query structure is not proper. should looks like: {name:"" , email:""}

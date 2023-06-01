@@ -21,7 +21,7 @@ interface Props {
   user?: User;
 }
 
-function AddOrEditModal(props: Props) {
+function UserDetailsModal(props: Props) {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
@@ -72,4 +72,4 @@ function AddOrEditModal(props: Props) {
   );
 }
 
-export default AddOrEditModal;
+export default UserDetailsModal;

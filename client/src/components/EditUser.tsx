@@ -1,8 +1,8 @@
 import { Button } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import AddOrEditModal from "../utils/Modal/addOrEditModal";
-import { User } from "../interfaces/User";
 import axios from "axios";
+import UserDetailsModal from "../utils/Modal/userDetailsModal";
+import { User } from "../interfaces/User";
 import { fetchData } from "../apiCalls/fetchData";
 import UserContext from "./contexts/userContext";
 
@@ -23,7 +23,6 @@ function EditUser(props: Props) {
 
     axios
       .post(path, { ...user })
-      .then()
       .then(() => {
         fetchData().then((res) => {
           console.log(res);
@@ -38,13 +37,13 @@ function EditUser(props: Props) {
     <div>
       <Button onClick={() => setIsOpen(true)}>edit</Button>
       {isOpen && (
-        <AddOrEditModal
+        <UserDetailsModal
           title={"Edit User"}
           isOpen={true}
           user={props.user}
           handleSave={handleSave}
           onClose={onClose}
-        ></AddOrEditModal>
+        ></UserDetailsModal>
       )}
     </div>
   );

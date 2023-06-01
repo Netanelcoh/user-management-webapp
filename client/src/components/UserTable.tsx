@@ -8,6 +8,7 @@ import UserContext from "./contexts/userContext";
 
 function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
+  const [isErrorOccur, setIsErrorOccur] = useState<Boolean>(false);
 
   const usersRef = useRef(users);
   usersRef.current = users;
@@ -16,8 +17,11 @@ function UserTable() {
     let isMounted = true;
 
     async function loadData() {
-      const data = await fetchData();
-      if (isMounted) setUsers(data);
+      const result = await fetchData();
+      if (result.message === "Network Error") {
+        setIsErrorOccur(true);
+      }
+      if (isMounted) setUsers(result);
     }
 
     loadData();
@@ -26,7 +30,9 @@ function UserTable() {
     };
   }, []);
 
-  return (
+  return isErrorOccur ? (
+    <p>Network Error</p>
+  ) : (
     <UserContext.Provider value={{ users, setUsers }}>
       <TableContainer>
         <Table variant="simple">
@@ -51,11 +57,3 @@ function UserTable() {
 }
 
 export default UserTable;
-
-// const dummyUsers = [
-//   { email: "Sincere@april.biz", name: "Leanne Graham" },
-//   { email: "Shanna@melissa.tv", name: "Ervin Howell" },
-//   { email: "Nathan@yesenia.net", name: "Clementine Bau" },
-//   { email: "Julianne.OConner@kory.org", name: "Patricik" },
-//   { email: "Lucio_Hettinger@annie.ca", name: "Chelsey" },
-// ];
