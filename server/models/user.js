@@ -5,24 +5,18 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
 });
 
-// /^find/
-// userSchema.pre("find", function () {
-//   const query = this.getQuery();
-//   console.log("run before find...");
-// });
-
-// userSchema.pre("findOneAndUpdate", function () {
-//   console.log("run before findOneAndUpdate...");
-//   const query = this.getQuery();
-
-//   if (!query._id) throw new Error("query must contains id");
-// });
-
 const validateUser = function (user) {
-  if (!(user.name && user.email)) throw new Error("user validation failed");
+  if (!(user.name && user.email)) return false;
+  return true;
+};
+
+const validateUserId = function (user) {
+  if (!user._id) return false;
+  return true;
 };
 
 const userModel = new mongoose.model("user", userSchema);
 
 module.exports.userModel = userModel;
 module.exports.validateUser = validateUser;
+module.exports.validateUserId = validateUserId;

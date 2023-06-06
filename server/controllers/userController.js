@@ -1,10 +1,8 @@
 const { default: mongoose } = require("mongoose");
-const { userModel, validateUser } = require("../models/user");
+const { userModel, validateUser, validateUserId } = require("../models/user");
 
-//TODO move all validation to Schema
 async function findUser(req, res) {
   try {
-    //const query = JSON.parse(req.query);
     const query = req.query;
 
     if (query === undefined || Object.entries(query).length === 0) {
@@ -34,7 +32,11 @@ async function addUser(req, res) {
   try {
     let query = req.body;
 
-    if (query === undefined || Object.entries(query).length === 0) {
+    if (
+      query === undefined ||
+      Object.entries(query).length === 0 ||
+      !validateUser(query)
+    ) {
       res.status(400).send("query should contain {name: , email: _}");
       return;
     }
@@ -50,18 +52,19 @@ async function addUser(req, res) {
 }
 
 async function editUser(req, res) {
-  //req.body = {id:  , name: <new name> , email: <new email> }
-
   try {
     const query = req.body;
 
-    if (query === undefined || Object.entries(query).length === 0) {
-      res.status(400).send("query should contain {id: , name: , email: _}");
+    if (
+      query === undefined ||
+      Object.entries(query).length === 0 ||
+      !validateUserId(query)
+    ) {
+      res.status(400).send("query should contains {id: , name: , email: _}");
       return;
     }
 
     const updatedUser = { name: query.name, email: query.email };
-    validateUser(updatedUser);
     const user = await userModel.findOneAndUpdate(
       { _id: query._id },
       {
@@ -73,7 +76,6 @@ async function editUser(req, res) {
       return;
     }
     res.status(200).send("Successfully");
-    //A.findOneAndUpdate(conditions, update: {new object}, options)  // returns Query
   } catch (error) {
     let msg = createCustomeErrorMsg(error);
     console.log(error);
@@ -83,18 +85,12 @@ async function editUser(req, res) {
 
 async function deleteUser(req, res) {
   try {
-    if (!req.params.id) {
-      res.status(400).send("query should contain");
-      return;
-    }
-
     const user = await userModel.findByIdAndRemove(req.params.id);
     if (!user) {
       res.status(404).send("User with the given id is not found");
       return;
     }
     res.status(200).send("Successfully");
-    //A.findOneAndUpdate(conditions, update: {new object}, options)  // returns Query
   } catch (error) {
     let msg = createCustomeErrorMsg(error);
     console.log(error);
@@ -106,7 +102,8 @@ function createCustomeErrorMsg(error) {
   if (error instanceof SyntaxError) return "Invalid Json";
   if (error instanceof mongoose.Error.ValidationError)
     return "user validation failed \n" + error.errors.name;
-  if (error instanceof mongoose.Error.CastError) return error.reason;
+  if (error instanceof mongoose.Error.CastError)
+    return "Argument passed in must be a string of 12 bytes or a string of 24 hex characters or an integer";
   if (error instanceof mongoose.Error) return "Error in db";
 
   return error;
