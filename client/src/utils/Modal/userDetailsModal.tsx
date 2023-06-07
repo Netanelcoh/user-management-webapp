@@ -9,8 +9,10 @@ import {
   Button,
   Text,
   Input,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { User } from "../../interfaces/User";
 
 interface Props {
@@ -22,10 +24,16 @@ interface Props {
 }
 
 function UserDetailsModal(props: Props) {
+  const [isError, setIsError] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
+    if (emailRef.current?.value === "" || nameRef.current?.value === "") {
+      setIsError(true);
+      return;
+    }
+
     let user = {
       name: nameRef.current?.value || "",
       email: emailRef.current?.value || "",
@@ -42,20 +50,28 @@ function UserDetailsModal(props: Props) {
           <ModalHeader>{props.title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text mb="8px">Name: </Text>
-            <Input
-              defaultValue={props.user?.name}
-              ref={nameRef}
-              type="text"
-              size="sm"
-            />
-            <Text mb="8px">Email: </Text>
-            <Input
-              defaultValue={props.user?.email}
-              ref={emailRef}
-              type="text"
-              size="sm"
-            />
+            <FormControl isRequired>
+              <FormLabel>Name</FormLabel>
+              <Input
+                defaultValue={props.user?.name}
+                ref={nameRef}
+                type="text"
+                size="sm"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                defaultValue={props.user?.email}
+                ref={emailRef}
+                type="email"
+                size="sm"
+              />
+            </FormControl>
+
+            {isError ? (
+              <Text color="#e53e3e">All Fields are required</Text>
+            ) : null}
           </ModalBody>
 
           <ModalFooter>
