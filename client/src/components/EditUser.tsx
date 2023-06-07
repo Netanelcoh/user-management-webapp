@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
 import { useContext, useState } from "react";
 import axios from "axios";
 import UserDetailsModal from "../utils/Modal/userDetailsModal";
@@ -35,7 +36,9 @@ function EditUser(props: Props) {
 
   return (
     <div>
-      <Button onClick={() => setIsOpen(true)}>edit</Button>
+      <Button size={"xs"} onClick={() => setIsOpen(true)}>
+        <EditIcon />
+      </Button>
       {isOpen && (
         <UserDetailsModal
           title={"Edit User"}

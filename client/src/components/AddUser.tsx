@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import { useContext, useState } from "react";
 import axios from "axios";
 import UserDetailsModal from "../utils/Modal/userDetailsModal";
@@ -32,8 +33,8 @@ function AddUser() {
 
   return (
     <div>
-      <Button onClick={() => setIsOpen(true)} colorScheme="blue">
-        Add
+      <Button size={"xs"} onClick={() => setIsOpen(true)} colorScheme="blue">
+        <AddIcon />
       </Button>
       {isOpen && (
         <UserDetailsModal

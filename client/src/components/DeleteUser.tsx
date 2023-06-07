@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
 import { useState, useContext } from "react";
 import axios from "axios";
 import DeleteAlertDialog from "../utils/Modal/deleteModal";
@@ -33,7 +34,9 @@ function DeleteUser(props: Props) {
 
   return (
     <div>
-      <Button onClick={() => setIsOpen(true)}>delete</Button>
+      <Button size={"xs"} onClick={() => setIsOpen(true)}>
+        <DeleteIcon />
+      </Button>
       {isOpen && (
         <DeleteAlertDialog
           isOpen={true}
