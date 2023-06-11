@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useState, useContext } from "react";
 import axios from "axios";
-import DeleteAlertDialog from "../utils/Modal/deleteModal";
+import DeleteAlertDialog from "../components/Modal/deleteModal";
 import { User } from "../interfaces/User";
 import UserContext from "./contexts/userContext";
 import { fetchData } from "../apiCalls/fetchData";
