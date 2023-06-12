@@ -1,11 +1,39 @@
 const mongoose = require("mongoose");
 
-module.exports = async function () {
+const { MongoMemoryServer } = require("mongodb-memory-server");
+let mongod = null;
+
+const connectDB = async () => {
   try {
-    console.log("Try to connect to db");
-    await mongoose.connect("mongodb://localhost:27017/user");
-    console.log("Connect successfully");
-  } catch (error) {
-    throw new Error("Fail to connect to Mongo \n" + error);
+    let dbUrl = "mongodb://localhost:27017";
+    console.log(process.env.NODE_ENV);
+    if (process.env.NODE_ENV === "test ") {
+      mongod = await MongoMemoryServer.create();
+      dbUrl = mongod.getUri();
+    }
+
+    const conn = await mongoose.connect(dbUrl, {
+      useNewUrlParser: true,
+      //useUnifiedTopology: true,
+    });
+
+    console.log(`MongoDB connected: ${conn.connection.host}`);
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
   }
 };
+
+const disconnectDB = async () => {
+  try {
+    await mongoose.connection.close();
+    if (mongod) {
+      await mongod.stop();
+    }
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+};
+
+module.exports = { connectDB, disconnectDB };

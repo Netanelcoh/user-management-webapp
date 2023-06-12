@@ -1,18 +1,17 @@
-const request = require("supertest");
+const app = require("../../app");
 const { userModel } = require("../../models/user");
+const { connectDB, disconnectDB } = require("../../onStartup/dbConnection");
+const supertest = require("supertest");
+const request = supertest(app);
 
 describe("/api/users/", () => {
-  let server;
-
   beforeAll(async () => {
-    console.log("run before test....");
-    server = require("../../app");
-    await userModel.deleteMany({});
+    await connectDB();
+    //await userModel.deleteMany({});
   });
   afterAll(async () => {
-    console.log("run after test....");
-    await server.close();
-    await userModel.db.close();
+    //await server.close();
+    await disconnectDB();
   });
 
   describe("GET /", () => {
@@ -31,13 +30,13 @@ describe("/api/users/", () => {
 
         await userModel.collection.insertMany(users);
 
-        const response = await request(server).get("/api/users");
+        const response = await request.get("/api/users");
         expect(response.status).toBe(200);
         expect(response.body).toHaveLength(2);
       });
 
       it("should fetch user by query", async () => {
-        const response = await request(server).get("/api/users?name=Monica");
+        const response = await request.get("/api/users?name=Monica");
 
         expect(response.status).toBe(200);
         expect(response.body).not.toHaveLength(0);
@@ -48,7 +47,7 @@ describe("/api/users/", () => {
 
     describe("when API call fails", () => {
       it("should return 404 if user is not found", async () => {
-        const response = await request(server).get("/api/users?name=rachel");
+        const response = await request.get("/api/users?name=rachel");
 
         expect(response.status).toBe(404);
       });
@@ -59,7 +58,7 @@ describe("/api/users/", () => {
     describe("Add user", () => {
       describe("when API call is successfull", () => {
         it("should add new user", async () => {
-          const response = await request(server).post("/api/users/add").send({
+          const response = await request.post("/api/users/add").send({
             name: "Rachel",
             email: "rachel@gmail.com",
           });
@@ -68,14 +67,14 @@ describe("/api/users/", () => {
         });
 
         it("fetch new user", async () => {
-          const response = await request(server).get("/api/users?name=Rachel");
+          const response = await request.get("/api/users?name=Rachel");
           expect(response.status).toBe(200);
         });
       });
 
       describe("when API call fails", () => {
         it("should return 400 if user does not contain email and name", async () => {
-          const response = await request(server)
+          const response = await request
             .post("/api/users/add")
             .send({ name: "Rachel" });
 
@@ -89,11 +88,11 @@ describe("/api/users/", () => {
         let response;
 
         it("should edit name and/or email of exsiting user", async () => {
-          response = await request(server).get("/api/users?name=Chandler");
+          response = await request.get("/api/users?name=Chandler");
 
           const userId = response.body[0]._id;
 
-          reponse = await request(server).post("/api/users/edit").send({
+          reponse = await request.post("/api/users/edit").send({
             _id: userId,
             name: "Joe",
             email: "joe@gmail.com",
@@ -103,7 +102,7 @@ describe("/api/users/", () => {
         });
 
         it("fetch user after edit", async () => {
-          const response = await request(server).get("/api/users?name=Joe");
+          const response = await request.get("/api/users?name=Joe");
 
           expect(response.status).toBe(200);
         });
@@ -111,7 +110,7 @@ describe("/api/users/", () => {
 
       describe("when API call fails", () => {
         it("should return 404 if the given user id is not found", async () => {
-          const response = await request(server).post("/api/users/edit").send({
+          const response = await request.post("/api/users/edit").send({
             _id: "111111111111111111111111",
             name: "Joe",
             email: "joe@gmail.com",
@@ -121,7 +120,7 @@ describe("/api/users/", () => {
         });
 
         it("should return 400 if query does not contain _id", async () => {
-          const response = await request(server).post("/api/users/edit").send({
+          const response = await request.post("/api/users/edit").send({
             name: "Joe",
             email: "joe@gmail.com",
           });
@@ -138,12 +137,10 @@ describe("/api/users/", () => {
         it("should delete user by given  user id", async () => {
           let response;
 
-          response = await request(server).get("/api/users");
+          response = await request.get("/api/users");
           const userId = response.body[0]._id;
 
-          response = await request(server).delete(
-            "/api/users/delete/" + userId
-          );
+          response = await request.delete("/api/users/delete/" + userId);
 
           expect(response.status).toBe(200);
         });
@@ -152,9 +149,7 @@ describe("/api/users/", () => {
           it("should return 400 if id is invalid", async () => {
             let id = "1111";
 
-            const response = await request(server).delete(
-              "/api/users/delete/" + id
-            );
+            const response = await request.delete("/api/users/delete/" + id);
 
             expect(response.status).toBe(400);
           });
@@ -162,9 +157,7 @@ describe("/api/users/", () => {
           it("should return 404 if no user with the given id was found", async () => {
             let id = "111111111111111111111111";
 
-            const response = await request(server).delete(
-              "/api/users/delete/" + id
-            );
+            const response = await request.delete("/api/users/delete/" + id);
 
             expect(response.status).toBe(404);
           });
