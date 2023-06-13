@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
-
 const { MongoMemoryServer } = require("mongodb-memory-server");
+require("dotenv").config();
+
 let mongod = null;
 
 const connectDB = async () => {
   try {
-    let dbUrl = "mongodb://localhost:27017";
-    console.log(process.env.NODE_ENV);
-    if (process.env.NODE_ENV === "test ") {
+    let dbUrl = process.env.MONGO_URI;
+
+    if (process.env.NODE_ENV === "test") {
       mongod = await MongoMemoryServer.create();
       dbUrl = mongod.getUri();
     }

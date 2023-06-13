@@ -1,5 +1,10 @@
 const express = require("express");
 const app = express();
-require("./onStartup/routes").loadMiddlewares(app);
+const cors = require("cors");
+const userRoutes = require("./routes/userRoutes");
+
+app.use(express.json());
+app.use(cors());
+app.use("/api/users", userRoutes);
 
 module.exports = app;
