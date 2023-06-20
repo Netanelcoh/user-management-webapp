@@ -1,6 +1,6 @@
 ## Introduction
 
-The project is User management web application that allows you to create, add and delete users from list
+The project is User management web application that allows you to create, edit and delete users from list
 
 ## Setup
 
